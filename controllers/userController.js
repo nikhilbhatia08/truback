@@ -65,4 +65,23 @@ const userLogin = async(req, res) => {
     }
 }
 
-module.exports = { userSignup, userLogin };
+const userDetails = async(req, res) => {
+    try {
+        const token = req.header('auth-token');
+
+        const verified = jwt.verify(token, process.env.JWT_SECRET);
+
+        if(!verified) {
+            return res.status(401).json({error: "Unauthorized"});
+        }
+
+        const user = await User.findOne({ email: verified.email });
+
+        res.status(200).json({user: user});
+    }
+    catch(err) {
+        console.log(err);
+    }
+}
+
+module.exports = { userSignup, userLogin, userDetails };
