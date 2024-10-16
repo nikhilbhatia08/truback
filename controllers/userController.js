@@ -2,86 +2,82 @@ const User = require('../models/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const userSignup = async(req, res) => {
-    try{
-        const { email, name, password } = req.body;
-        if(!email || !name || !password) {
-            return res.status(400).json({error: "All fields are required"});
-        }
-
-        const userExists = await User.findOne({ email: email });
-        if(userExists) {
-            return res.status(400).json({error: "User already exists"});
-        }
-
-        const salt = bcrypt.genSaltSync(10);
-
-        const user = new User({
-            email: email,
-            name: name,
-            password: bcrypt.hashSync(password, salt),
-            history: [],
-            bookmarks: []
-        });
-
-        await user.save();
-        res.status(200).json({message: "User created successfully"});
+const userSignup = async (req, res) => {
+  try {
+    const { email, name, password } = req.body;
+    if (!email || !name || !password) {
+      return res.status(400).json({ error: 'All fields are required' });
     }
-    catch(err) {
-        console.log(err);
+
+    const userExists = await User.findOne({ email: email });
+    if (userExists) {
+      return res.status(400).json({ error: 'User already exists' });
     }
-}
 
-const userLogin = async(req, res) => {
-    try{
-        const { username, password } = req.body;
-        if(!username || !password) {
-            return res.status(400).json({error: "All fields are required"});
-        }
+    const salt = bcrypt.genSaltSync(10);
 
-        const user = await User.findOne({ email: username });
-        if(!user) {
-            return res.status(400).json({error: "User does not exist"});
-        }
+    const user = new User({
+      email: email,
+      name: name,
+      password: bcrypt.hashSync(password, salt),
+      history: [],
+      bookmarks: [],
+    });
 
-        const isMatch = bcrypt.compareSync(password, user.password);
-        if(!isMatch) {
-            return res.status(400).json({error: "Invalid credentials"});
-        }
-        else {
-            const jwtToken = {
-                email: user.email,
-                name: user.name
-            }
+    await user.save();
+    res.status(200).json({ message: 'User created successfully' });
+  } catch (err) {
+    console.log(err);
+  }
+};
 
-            const token = jwt.sign(jwtToken, process.env.JWT_SECRET, {expiresIn: '365d'});
-
-            res.status(200).json({token: token});
-            return;
-        }
+const userLogin = async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    if (!username || !password) {
+      return res.status(400).json({ error: 'All fields are required' });
     }
-    catch(err) {
-        console.log(err);
+
+    const user = await User.findOne({ email: username });
+    if (!user) {
+      return res.status(400).json({ error: 'User does not exist' });
     }
-}
 
-const userDetails = async(req, res) => {
-    try {
-        const token = req.header('auth-token');
+    const isMatch = bcrypt.compareSync(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ error: 'Invalid credentials' });
+    } else {
+      const jwtToken = {
+        email: user.email,
+        name: user.name,
+      };
 
-        const verified = jwt.verify(token, process.env.JWT_SECRET);
+      const token = jwt.sign(jwtToken, process.env.JWT_SECRET, { expiresIn: '365d' });
 
-        if(!verified) {
-            return res.status(401).json({error: "Unauthorized"});
-        }
-
-        const user = await User.findOne({ email: verified.email });
-
-        res.status(200).json({user: user});
+      res.status(200).json({ token: token });
+      return;
     }
-    catch(err) {
-        console.log(err);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const userDetails = async (req, res) => {
+  try {
+    const token = req.header('auth-token');
+
+    const verified = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (!verified) {
+      return res.status(401).json({ error: 'Unauthorized' });
     }
-}
+
+    const user = await User.findOne({ email: verified.email });
+
+    res.status(200).json({ user: user });
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 module.exports = { userSignup, userLogin, userDetails };

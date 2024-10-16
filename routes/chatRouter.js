@@ -3,9 +3,6 @@ const { saveResponse, getHistory, getSaved } = require('../controllers/chatContr
 
 const router = express.Router();
 
-router
-    .post("/save", saveResponse)
-    .get("/history", getHistory)
-    .get("/saved", getSaved)
+router.post('/save', saveResponse).get('/history', getHistory).get('/saved', getSaved);
 
 module.exports = router;

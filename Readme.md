@@ -1,11 +1,11 @@
 # TruBack
 
-**TruBack** is a backend project designed to handle queries of the users and uses llm api's to give the answers to the queries of the users. 
+**TruBack** is a backend project designed to handle queries of the users and uses llm api's to give the answers to the queries of the users.
 
 ## Features
 
 - Feature 1: login and authentication
-- Feature 2: asking queries to the llm and getting the answers 
+- Feature 2: asking queries to the llm and getting the answers
 - Feature 3: saving and history features for saving some responses and having a history
 
 ## Technologies Used

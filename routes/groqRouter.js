@@ -3,7 +3,6 @@ const { groqController } = require('../controllers/groqController');
 
 const router = express.Router();
 
-router
-    .post("/question", groqController);
+router.post('/question', groqController);
 
 module.exports = router;
